@@ -1,0 +1,15 @@
+<% if @parent.nil? %>
+  <h1>New Training</h1>
+<% else %>
+  <h1>New Module under <%= @parent.name %></h1>
+<% end %>
+
+<%= render 'form', training: @training %>
+<br/>
+<% if @parent && (@parent.ancestors != [] || @parent.parent) %>
+  <%= link_to 'Back', training_path(@parent.ancestors.last || @parent.parent) %>
+<% elsif @parent %>
+  <%= link_to 'Back', training_path(@parent) %>
+<% else %>
+  <%= link_to 'Back', trainings_path %>
+<% end %>

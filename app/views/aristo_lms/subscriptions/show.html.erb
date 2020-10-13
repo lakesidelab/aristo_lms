@@ -1,0 +1,133 @@
+<h1><%= @subscription.training.name %></h1>
+<br/>
+<br/>
+<% if @active_node.category == "submodule" || @active_node.category == "question_answer_session" %>
+  <% if @finished %>
+    <center>
+      Q&A session completed<br/>
+      <% if @active_node.siblings_after.length != 0 %>
+        <%= link_to "Next", subscription_path(@subscription, active_module_id: @active_module, immediate_parent_id: @active_module,  active_node_id: @active_node.siblings_after.first), class: "btn btn-outline-primary" %>
+      <% elsif @active_node.siblings_after.length == 0 && @active_module.id != @immediate_parent.id %>
+        <%= link_to "Next", subscription_path(@subscription, active_module_id: @active_module, active_node_id: @immediate_parent.siblings_after.first.children.first) %>
+      <% elsif @active_node.siblings_after.length ==0 && @active_module.id == @immediate_parent.id && @active_node.siblings_after.length != 0 %>
+        <%= link_to "Next Module", subscription_path(@subscription, active_module_id: @active_module.siblings_after.first, active_node_id: @active_module.siblings_after.first.children.first) %>
+      <% elsif @active_node.siblings_after.length ==0 && @active_module.id == @immediate_parent.id && @active_node.siblings_after.length == 0 %>
+        <%= link_to "Finish", finish_track_path(subscription_id: @subscription),  method: :post, class: "btn btn-outline-primary" %>
+      <% end %>
+    </center>
+  <% else %>
+    <center>
+      <% if @already_done %>
+        You have already completed this, do you want to retake<br/>
+        <%= link_to "Retake", subscription_path(@subscription, active_module_id: @active_module, immediate_parent_id: @active_node,  active_node_id: @active_node.children.first, retake: true) %>
+      <% else %>
+        <%= @active_node.content %><br/>
+        <%= link_to "Start", subscription_path(@subscription, active_module_id: @active_module, immediate_parent_id: @active_node,  active_node_id: @active_node.children.first) %> to start submodule
+      <% end %>
+    </center>
+  <% end %>
+
+<% elsif @active_node.category == "content" %>
+    <h3><%= @active_node.name %></h3>
+    <br/>
+    <%= @active_node.content %>
+    <br/>
+    <br/>
+    <div class="row">
+      <div class="col-sm-6 col-md-6">
+        <% if @active_node.siblings_before.length !=0  %>
+          <%= link_to "Back", subscription_path(@subscription, active_module_id: @active_module, immediate_parent_id: @active_module,  active_node_id: @active_node.siblings_before.last), class: "btn btn-outline-primary" %>
+        <% elsif @active_node.siblings_before.length == 0 && @active_module.id != @immediate_parent.id %>
+          <%= link_to "Back", subscription_path(@subscription, active_module_id: @active_module, active_node_id: @immediate_parent.siblings_before.last.children.first) %>
+        <% elsif @active_node.siblings_before.length ==0 && @active_module.id == @immediate_parent.id && @active_node.siblings_before.length != 0 %>
+          <%= link_to "Previous Module", subscription_path(@subscription, active_module_id: @active_module.siblings_before.last, active_node_id: @active_module.siblings_before.last.children.first) %>
+        <% elsif @active_node.siblings_before.length ==0 && @active_module.id == @immediate_parent.id && @active_node.siblings_before.length == 0 %>
+          <%= link_to "Back", subscriptions_path, class: "btn btn-outline-primary" %>
+        <% end %>
+      </div>
+      <div class="col-sm-6 col-md-6">
+        <% if @active_node.siblings_after.length != 0 %>
+          <%= link_to "Next", subscription_path(@subscription, active_module_id: @active_module, immediate_parent_id: @active_module,  active_node_id: @active_node.siblings_after.first), class: "btn btn-outline-primary" %>
+        <% elsif @active_node.siblings_after.length == 0 && @active_module.id != @immediate_parent.id %>
+          <%= link_to "Next", subscription_path(@subscription, active_module_id: @active_module, active_node_id: @immediate_parent.siblings_after.first.children.first) %>
+        <% elsif @active_node.siblings_after.length ==0 && @active_module.id == @immediate_parent.id && @active_node.siblings_after.length != 0 %>
+          <%= link_to "Next Module", subscription_path(@subscription, active_module_id: @active_module.siblings_after.first, active_node_id: @active_module.siblings_after.first.children.first) %>
+        <% elsif @active_node.siblings_after.length ==0 && @active_module.id == @immediate_parent.id && @active_node.siblings_after.length == 0 %>
+          <%= link_to "Finish", subscriptions_path, class: "btn btn-outline-primary" %>
+        <% end %>
+      </div>
+    </div>
+
+<% elsif @active_node.category == "question" %>
+  <% if @finished %>
+    <div class="row">
+      <div class="col-sm-6 col-md-6">
+        <% if @active_node.siblings_before.length !=0  %>
+          <%= link_to "Back", subscription_path(@subscription, active_module_id: @active_module, immediate_parent_id: @active_module,  active_node_id: @active_node.siblings_before.last), class: "btn btn-outline-primary" %>
+        <% elsif @active_node.siblings_before.length == 0 && @active_module.id != @immediate_parent.id %>
+          <%= link_to "Back", subscription_path(@subscription, active_module_id: @active_module, active_node_id: @immediate_parent.siblings_before.last.children.first) %>
+        <% elsif @active_node.siblings_before.length ==0 && @active_module.id == @immediate_parent.id && @active_node.siblings_before.length != 0 %>
+          <%= link_to "Previous Module", subscription_path(@subscription, active_module_id: @active_module.siblings_before.last, active_node_id: @active_module.siblings_before.last.children.first) %>
+        <% elsif @active_node.siblings_before.length ==0 && @active_module.id == @immediate_parent.id && @active_node.siblings_before.length == 0 %>
+          <%= link_to "Back", subscriptions_path, class: "btn btn-outline-primary" %>
+        <% end %>
+      </div>
+      <div class="col-sm-6 col-md-6">
+        <% if @active_node.siblings_after.length != 0 %>
+          <%= link_to "Next", subscription_path(@subscription, active_module_id: @active_module, immediate_parent_id: @active_module,  active_node_id: @active_node.siblings_after.first), class: "btn btn-outline-primary" %>
+        <% elsif @active_node.siblings_after.length == 0 && @active_module.id != @immediate_parent.id %>
+          <%= link_to "Next", subscription_path(@subscription, active_module_id: @active_module, active_node_id: @immediate_parent.siblings_after.first.children.first) %>
+        <% elsif @active_node.siblings_after.length ==0 && @active_module.id == @immediate_parent.id && @active_node.siblings_after.length != 0 %>
+          <%= link_to "Next Module", subscription_path(@subscription, active_module_id: @active_module.siblings_after.first, active_node_id: @active_module.siblings_after.first.children.first) %>
+        <% elsif @active_node.siblings_after.length ==0 && @active_module.id == @immediate_parent.id && @active_node.siblings_after.length == 0 %>
+          <%= link_to "Finish", subscriptions_path, class: "btn btn-outline-primary" %>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <% if @already_done %>
+      <%= link_to "Retake", subscription_path(@subscription, active_module_id: @active_module, immediate_parent_id: @active_node.parent.id,  active_node_id: @active_node.id, retake: true) %>
+    <% end %>
+    <h3><%= @active_node.name %></h3>
+    <%= @active_node.content %>
+
+    <% if @mcq %>
+        <%= form_for @answer, :url => url_for(:controller => 'subscriptions', :action => 'quiz') do |form| %>
+          <% @active_node.children.each do |option| %>
+            <%= form.check_box(:answer_id, { :multiple => true }, option.id, nil) %>
+            <%= form.label :answer_id, option.name %>
+            <br/>
+          <% end %>
+
+          <%= form.hidden_field :session_id, :value => @active_node.parent.id %>
+          <%= form.hidden_field :question_id, :value => @active_node.id %>
+          <%= form.hidden_field :subscription_id, :value => @subscription.id %>
+          <%= form.hidden_field :module_id, :value => @active_module.id %>
+
+          <div class="actions">
+            <%= form.submit class: "btn btn-outline-primary" %>
+          </div>
+        <% end %>
+    <% else %>
+      <br/><br/>
+        <%= form_for @answer, url: submit_answer_path, method: :post do |form| %>
+          <% @active_node.children.each do |option| %>
+            <%= form.radio_button :answer_id, option.id %>
+            <%= form.label :answer_id, option.name %>
+            <br/>
+          <% end %>
+
+          <%= form.hidden_field :session_id, :value => @active_node.parent.id %>
+          <%= form.hidden_field :question_id, :value => @active_node.id %>
+          <%= form.hidden_field :subscription_id, :value => @subscription.id %>
+          <%= form.hidden_field :module_id, :value => @active_module.id %>
+
+          <div class="actions">
+            <%= form.submit class: "btn btn-outline-primary" %>
+          </div>
+
+          <br/>
+          <% end %>
+        <% end %>
+    <% end %>
+<% end %>
