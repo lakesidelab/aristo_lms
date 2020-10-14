@@ -60,6 +60,9 @@
 
 <% elsif @active_node.category == "question" %>
   <% if @finished %>
+    <center>
+      <h1>You have Finished answering this question.</h1>
+    </center><br/><br/>
     <div class="row">
       <div class="col-sm-6 col-md-6">
         <% if @active_node.siblings_before.length !=0  %>
@@ -87,7 +90,7 @@
   <% else %>
     <% if @already_done %>
       <%= link_to "Retake", subscription_path(@subscription, active_module_id: @active_module, immediate_parent_id: @active_node.parent.id,  active_node_id: @active_node.id, retake: true) %>
-    <% end %>
+    <% else %>
     <h3><%= @active_node.name %></h3>
     <%= @active_node.content %>
 
@@ -128,6 +131,8 @@
 
           <br/>
           <% end %>
-        <% end %>
+      <% end %>
+    <% end %>
+
     <% end %>
 <% end %>

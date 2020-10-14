@@ -97,9 +97,9 @@ module AristoLms
 
       if @active_node.category == "question" && @active_node.children
         if params[:retake] && @active_node.parent.category == "question_answer_session"
-          Mark.where(["training_id = ? and user_id = ?", "#{@active_node.parent.id}", "#{current_user.id}"]).delete
+          Mark.where(["training_id = ? and user_id = ?", "#{@active_node.parent.id}", "#{current_user.id}"]).update(marks: nil)
         elsif params[:retake] && @active_node.parent.category != "question_answer_session"
-          Mark.where(["training_id = ? and user_id = ?", "#{@active_node.id}", "#{current_user.id}"]).delete
+          Mark.where(["training_id = ? and user_id = ?", "#{@active_node.id}", "#{current_user.id}"]).destroy_all
         end
         @answer = Answer.new
         if @active_node.children.where(correct: "yes").length > 1
