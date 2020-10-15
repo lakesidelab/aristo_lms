@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  subscription_id: 1
+  current_node_id: MyString
+  total_question: 1
+  score: 1
+  status: 1
+  result: 1
+
+two:
+  user_id: 1
+  subscription_id: 1
+  current_node_id: MyString
+  total_question: 1
+  score: 1
+  status: 1
+  result: 1

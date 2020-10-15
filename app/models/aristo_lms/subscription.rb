@@ -3,5 +3,6 @@ module AristoLms
     belongs_to :training
     belongs_to :user, class_name: AristoLms.user_class
     has_many :statuses
+    has_many :attempts
   end
 end

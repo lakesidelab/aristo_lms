@@ -5,7 +5,7 @@ AristoLms::Engine.routes.draw do
 
   post '/answer', to: 'subscriptions#quiz', as:'submit_answer'
 
-  post '/finish', to: 'subscriptions#finish', as: 'finish_track'
+  get '/finish', to: 'subscriptions#finish', as: 'finish_track'
 
   resources :subscriptions
 

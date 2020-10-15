@@ -25,57 +25,61 @@ module AristoLms
 
 
     def finish
-      Status.where(subscription_id: params[:subscription_id], user_id: current_user.id).update(completed: true)
+      @attempt = Attempt.where(subscription_id: params[:subscription_id], user_id: current_user.id).last
+      if @attempt.score / @attempt.total_question * 100 >= 50
+        @attempt.result = "pass"
+      else
+        @attempt.result = "fail"
+      end
+      @attempt.update(completed: true)
       redirect_to subscriptions_path
     end
 
     def quiz
       # render plain: params.inspect
-      @answer = Answer.
-                  find_or_initialize_by(answer_params).
-                  update_attributes!(answer_id: params[:answer][:answer_id])
+
+      if !(params[:answer][:multiple_answer_ids].nil?)
+        @answer = Answer.new(user_id: current_user.id, question_id: params[:answer][:question_id],
+                    multiple_answer_ids: params[:answer][:multiple_answer_ids].join(","), attempt_id: params[:answer][:attempt_id])
+      else
+        @answer = Answer.new(user_id: current_user.id, question_id: params[:answer][:question_id],
+          answer_id: params[:answer][:answer_id], attempt_id: params[:answer][:attempt_id])
+      end
+
+      @answer.save
+
+      @siblings_after = Training.find(params[:answer][:question_id]).siblings_after
       @subscription = Subscription.find(params[:answer][:subscription_id])
       @active_module = Training.find(params[:answer][:module_id])
-      @immediate_parent = Training.find(params[:answer][:session_id])
-      @active_node = Training.find(params[:answer][:question_id])
-      if @immediate_parent.category != "question_answer_session"
-        @to_be_set = @active_node
-      else
-        @to_be_set = @active_module
-      end
-      if @answer
-        @correct_answer = @active_node.children.where(correct: "yes")
 
-        if @correct_answer.length == 1 && params[:answer][:answer_id].to_i == @correct_answer[0].id
-          if Mark.where(training_id: @active_node.id, user_id: current_user.id).length != 0 && !(Mark.where(training_id: @active_node.id, user_id: current_user.id)[0].marks.nil?)
-            puts(Mark.where(["training_id = ? and user_id = ?", "#{@active_node.id}", "#{current_user.id}"])[0].attributes)
-            @obtained_marks = Mark.where(training_id: @active_node.id, user_id: current_user.id)[0].marks + 1
-          else
-            @obtained_marks = 1
-          end
-        elsif @correct_answer.length != 1 && params[:answer][:answer_id] - @active_node.children.where(correct: "yes").map{|child| child.id.to_s} == []
-          if Mark.where(training_id: @active_node.id, user_id: current_user.id).length != 0
-            @obtained_marks = Mark.where(training_id: @active_node.id, user_id: current_user.id)[0].marks + 1
-          else
-            @obtained_marks = 1
-          end
+
+      @question = Training.find(params[:answer][:question_id])
+      if @question.children.where(correct: "yes").length == 1
+        if @question.children.where(correct: "yes").first.id  == params[:answer][:answer_id].to_i
+          @attempt = Attempt.where(subscription_id: params[:answer][:subscription_id], user_id: current_user.id).last
+
+          @attempt.increment!(:score)
         end
-        if @immediate_parent.category == "question_answer_session" && @active_node.siblings_after.length!= 0
-          redirect_to subscription_path(@subscription, active_module_id: @active_module, immediate_parent_id: @immediate_parent, active_node_id: @active_node.siblings_after.first)
-        else
-          if @to_be_set.category == "question"
-            @mark = Mark
-                      .find_or_initialize_by(user_id: current_user.id, training_id: @to_be_set.id)
-                      .update_attributes!(marks: @obtained_marks)
-            redirect_to subscription_path(@subscription, active_module_id: @active_module, immediate_parent_id: @to_be_set.parent, active_node_id: @to_be_set, finished: true)
-          else
-            @active_node = @active_node.parent
-            @mark = Mark
-            .find_or_initialize_by(user_id: current_user.id, training_id: @active_node.id)
-            .update_attributes!(marks: @obtained_marks)
-            redirect_to subscription_path(@subscription, active_module_id: @active_module, immediate_parent_id: @active_node.parent, active_node_id: @active_node, finished: true)
-          end
+      else
+        @right_answer_ids = @question.children.where(correct: "yes").map{|object| object.id.to_s }
+        puts(@right_answer_ids)
+        puts("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        if !(@right_answer_ids.difference(params[:answer][:multiple_answer_ids]).any?)
+          puts("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
+          @attempt = Attempt.where(subscription_id: params[:answer][:subscription_id], user_id: current_user.id).last
+
+          @attempt.increment!(:score)
         end
+      end
+
+
+
+      if @siblings_after.length != 0
+        @active_node = @siblings_after.first
+        redirect_to subscription_path(@subscription, active_module_id: @active_module, immediate_parent: @active_node.parent, active_node_id: @active_node)
+      else
+        @active_node = Training.find(params[:answer][:question_id])
+        redirect_to finish_track_path(subscription_id: @subscription)
       end
     end
 
@@ -85,42 +89,27 @@ module AristoLms
       @active_node_id  = params[:active_node_id]
       @immediate_parent_id = params[:immediate_parent_id]
 
-      if params[:active_module_id].nil?
+      if params[:active_node_id].nil?
         @active_module = @subscription.training.children.first
         @immediate_parent = @subscription.training.children.first
         @active_node  = @active_module.children.first
+        @attempt = Attempt.new(user_id: current_user.id, subscription_id: @subscription.id, current_node_id: @active_node.id,
+                                total_question: @active_module.children.where(category: "question").length)
+        @attempt.save
       else
-        @active_module = Training.find(params[:active_module_id])
         @active_node  = Training.find(params[:active_node_id])
-        @immediate_parent = Training.find(params[:immediate_parent_id])
+        @active_module = @active_node.ancestors[@active_node.ancestors.length - 2]
+        @immediate_parent = @active_node.parent
+        Attempt.where(["subscription_id = ? and user_id = ?", "#{@subscription.id}", "#{current_user.id}"]).last.update(current_node_id: @active_node.id)
       end
 
-      if @active_node.category == "question" && @active_node.children
-        if params[:retake] && @active_node.parent.category == "question_answer_session"
-          Mark.where(["training_id = ? and user_id = ?", "#{@active_node.parent.id}", "#{current_user.id}"]).update(marks: nil)
-        elsif params[:retake] && @active_node.parent.category != "question_answer_session"
-          Mark.where(["training_id = ? and user_id = ?", "#{@active_node.id}", "#{current_user.id}"]).destroy_all
-        end
+      if @active_node.category == "question"
         @answer = Answer.new
         if @active_node.children.where(correct: "yes").length > 1
           @mcq = true
         end
       end
 
-      if @active_node.category == "question_answer_session" || @active_node.category == "question"
-        if Mark.where(["training_id = ? and user_id = ?", "#{@active_node.id}", "#{current_user.id}"]).length != 0
-          @already_done = true
-        end
-        if params[:finished]
-          @finished = true
-        end
-      end
-
-      if !(@finished)
-        Status.
-          find_or_initialize_by(subscription_id: @subscription.id, active_module_id: @active_module.id, user_id: current_user.id)
-          .update_attributes!(immediate_parent_id: @immediate_parent.id, active_node_id: @active_node.id)
-      end
 
     end
 
@@ -131,7 +120,12 @@ module AristoLms
     end
 
     def answer_params
-      params.require(:answer).permit(:session_id, :answer_id, :question_id, :module_id, :subscription_id)
+      params.require(:answer).permit(:attempt_id, :question_id, :answer_id, :subscription_id, :module_id)
+    end
+
+    def attempt_params
+      params.require(:attempt).permit(:user_id, :subscription_id, :current_node_id, :total_question, :score,
+                                      :completed, :result)
     end
 
     def set_subscription
