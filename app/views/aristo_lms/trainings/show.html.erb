@@ -10,11 +10,6 @@
   <div class="col-sm-6 col-md-6">
     <% if @is_arisro_admin %>
       <%= link_to 'Edit', edit_training_path(@training), class: "btn btn-outline-primary" %> |
-      <% if @training.category == "" || @training.category == "submodule" %>
-        <%= link_to 'Create a Module', new_training_path(parent_id: @training.id), class: "btn btn-outline-primary" %> |
-      <% elsif @training.category == "question_answer_session" %>
-        <%= link_to 'Add question', new_training_path(parent_id: @training.id, category: "question"), class: "btn btn-outline-primary" %>
-      <% end %>
     <% end %>
     <%# Back based on different situations %>
     <% if @training.parent && @training.ancestors.length == 2 %>
@@ -29,13 +24,79 @@
   </div>
 
 
+
+
+
 </div>
+
+
+
+<% if @training.category == "training" %>
+
+
+  <%= link_to 'Create Content', new_training_path(parent_id: @training, category: "content"), class: "btn btn-outline-primary" %> |
+  <%= link_to 'Create Module', new_training_path(parent_id: @training, category: "module"), class: "btn btn-outline-primary" %> |
+  <%= link_to 'Create Switch', new_training_path(parent_id: @training, category: "switch"), class: "btn btn-outline-primary" %> |
+  <%= link_to 'Create Question', new_training_path(parent_id: @training, category: "question"), class: "btn btn-outline-primary" %>
+  <br/><br/>
+  <%= @training.content %>
+  <br/><br/>
+
+  <% @training.children.each do |node| %>
+
+  <div class="row">
+    <div class="col-sm-6 col-md-6">
+      <h4 class="training-title"><%= node.name %></h4>
+    </div>
+    <div class="col-sm-6 col-md-6">
+      <%= link_to "Show", training_path(node), class: "btn btn-outline-primary" %> |
+      <%= link_to "Edit", edit_training_path(node), class: "btn btn-outline-primary" %> |
+      <%= link_to 'Destroy', node, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto" %>
+    </div>
+  </div>
+    <% if node.category == "content" %>
+
+      <%= node.description %>
+
+      <br/><br/>
+    <% elsif node.category == "module" || node.category == "switch" %>
+      <%= node.description %><br/><br/>
+      <% if node.category == "module" %>
+        <%= link_to 'Create Content', new_training_path(parent_id: node, category: "content"), class: "btn btn-outline-primary" %> |
+        <%= link_to 'Create Switch', new_training_path(parent_id: node, category: "switch"), class: "btn btn-outline-primary" %> |
+        <%= link_to 'Create Question', new_training_path(parent_id: node, category: "question"), class: "btn btn-outline-primary" %> |
+      <% end %>
+      <%= link_to 'Create Module', new_training_path(parent_id: node, category: "module"), class: "btn btn-outline-primary" %>
+      <br/><br/>
+      <div class="row">
+        <% node.children.each do |child| %>
+
+        <div class="col-sm-3 col-md-3" id="<%= dom_id(child) %>">
+          <div class="card h-100 border border-primary">
+            <div class="card-body">
+              <h5 class="card-title training-title"><%= child.name %></h5>
+              <p class="card-text"><%= child.description %></p>
+            </div>
+            <div class="card-body d-flex flex-column">
+              <%= link_to 'Show ' + child.category, child, class: "btn btn-outline-primary mt-auto"%>
+              <%= link_to 'Edit', edit_training_path(child), class: "btn btn-outline-primary mt-auto" %>
+              <%= link_to 'Destroy', child, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto" %>
+            </div>
+          </div>
+        </div>
+        <% end %>
+      </div>
+      <br/><br/>
+    <% end %>
+
+
+  <% end %>
+
+
+<% end %>
 
 <br/>
 
-<h4>
-  <%= @training.content %>
-</h4>
 
 <%# end of name and description %>
 
@@ -47,10 +108,34 @@
 
 
 
+<% if @training.category == "switch" %>
+  <%= @training.content %>
+
+  <% @training.children.each do |switch_module| %>
+    <div class="row">
+      <div class="col-sm-6 col-md-6">
+        <h4 class="training-title"><%= switch_module.name %></h4>
+      </div>
+      <div class="col-sm-6 col-md-6">
+        <%= link_to "Show", training_path(switch_module), class: "btn btn-outline-primary" %> |
+        <%= link_to "Edit", edit_training_path(switch_module), class: "btn btn-outline-primary" %> |
+        <%= link_to 'Destroy', switch_module, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto" %>
+      </div>
+    <h6><%= switch_module.description %></h6>
+
+  <% end %>
+
+<% end %>
+
+
 
 
 <%# if it is a submodule or switch, basically a nest of another module inside a 1st level module %>
-<% if @training.category == "submodule" || @training.category == "" %>
+<% if @training.category == "module"%>
+  <%= link_to 'Create Content', new_training_path(parent_id: @training, category: "content"), class: "btn btn-outline-primary" %> |
+  <%= link_to 'Create Module', new_training_path(parent_id: @training, category: "module"), class: "btn btn-outline-primary" %> |
+  <%= link_to 'Create Switch', new_training_path(parent_id: @training, category: "switch"), class: "btn btn-outline-primary" %> |
+  <%= link_to 'Create Question', new_training_path(parent_id: @training, category: "question"), class: "btn btn-outline-primary" %>
   <div class="module-list">
 
     <%# lists all first level modules %>

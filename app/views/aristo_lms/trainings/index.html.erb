@@ -2,7 +2,7 @@
 
 <h1>Trainings</h1>
 
-
+  <!-- listing tracks -->
   <div id="tracks" class="row" data-url="<%= sort_trainings_path %>">
     <% @trainings.each do |training| %>
       <div class="col-sm-3 col-md-3" id="<%= dom_id(training) %>">
@@ -19,8 +19,11 @@
         </div>
       </div>
     <% end %>
+
+
+    <!-- link for new training -->
     <div class="col-sm-3 col-md-3">
-      <%= link_to new_training_path, class: "hover-link" do%>
+      <%= link_to new_training_path(category: "training"), class: "hover-link" do%>
         <div class="card h-100 border border-primary new-content-add-card">
           <div class="card-body">
             <center>

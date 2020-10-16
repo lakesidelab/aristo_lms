@@ -26,7 +26,11 @@ module AristoLms
 
     def finish
       @attempt = Attempt.where(subscription_id: params[:subscription_id], user_id: current_user.id).last
-      if @attempt.score / @attempt.total_question * 100 >= 50
+      if @attempt.total_question == 0
+        @attempt.result = "pass"
+      elsif @attemt.total_question !=0 && @attemt.score == 0
+        @attempt.result = "fail"
+      elsif @attempt.score != 0 && @attempt.score / @attempt.total_question * 100 >= 50
         @attempt.result = "pass"
       else
         @attempt.result = "fail"
@@ -56,16 +60,14 @@ module AristoLms
       @question = Training.find(params[:answer][:question_id])
       if @question.children.where(correct: "yes").length == 1
         if @question.children.where(correct: "yes").first.id  == params[:answer][:answer_id].to_i
-          @attempt = Attempt.where(subscription_id: params[:answer][:subscription_id], user_id: current_user.id).last
+          @attempt = Attempt.where(subscription_id: params[:answer][:subscription_id], user_id: current_user.id).order(:created_at).last
 
           @attempt.increment!(:score)
         end
       else
         @right_answer_ids = @question.children.where(correct: "yes").map{|object| object.id.to_s }
         puts(@right_answer_ids)
-        puts("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
         if !(@right_answer_ids.difference(params[:answer][:multiple_answer_ids]).any?)
-          puts("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
           @attempt = Attempt.where(subscription_id: params[:answer][:subscription_id], user_id: current_user.id).last
 
           @attempt.increment!(:score)
@@ -90,20 +92,33 @@ module AristoLms
       @immediate_parent_id = params[:immediate_parent_id]
 
       if params[:active_node_id].nil?
-        @active_module = @subscription.training.children.first
-        @immediate_parent = @subscription.training.children.first
-        @active_node  = @active_module.children.first
+        @active_node = @subscription.training.children.first
+        # @immediate_parent = @subscription.training.children.first
+        # @active_node  = @active_module.children.first
         @attempt = Attempt.new(user_id: current_user.id, subscription_id: @subscription.id, current_node_id: @active_node.id,
-                                total_question: @active_module.children.where(category: "question").length)
+                                total_question: 0)
         @attempt.save
       else
         @active_node  = Training.find(params[:active_node_id])
         @active_module = @active_node.ancestors[@active_node.ancestors.length - 2]
         @immediate_parent = @active_node.parent
-        Attempt.where(["subscription_id = ? and user_id = ?", "#{@subscription.id}", "#{current_user.id}"]).last.update(current_node_id: @active_node.id)
+        Attempt.where(["subscription_id = ? and user_id = ?", "#{@subscription.id}", "#{current_user.id}"]).order(:created_at).last.update(current_node_id: @active_node.id)
       end
 
+      if @active_node.category == "module"
+        @finished = params[:finished_module] ? params[:finished_module] : false
+      end
+
+      if @active_node.category == "switch" && !(params[:finished_module_id].nil?)
+        @attempt_id = Attempt.where(["subscription_id = ? and user_id = ?", "#{@subscription.id}", "#{current_user.id}"]).order(:created_at).last.id
+        @training_id = Training.find(params[:finished_module_id]).id
+        @switch = Switch.new(attempt_id: @attempt_id, training_id: params[:finished_module_id], completed: true)
+        @switch.save
+      end
+
+
       if @active_node.category == "question"
+        Attempt.where(["subscription_id = ? and user_id = ?", "#{@subscription.id}", "#{current_user.id}"]).order(:created_at).last.increment!(:total_question)
         @answer = Answer.new
         if @active_node.children.where(correct: "yes").length > 1
           @mcq = true

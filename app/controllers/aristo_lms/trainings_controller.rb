@@ -83,7 +83,6 @@ module AristoLms
     # DELETE /trainings/1
     def destroy
       @training.destroy
-      @training.destroy
       redirect_to trainings_url, notice: 'Training was successfully destroyed.'
     end
 
