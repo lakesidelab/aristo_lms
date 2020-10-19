@@ -9,6 +9,7 @@ class CreateAristoLmsTrainings < ActiveRecord::Migration[6.0]
       t.string :correct
       t.integer :user_id
       t.integer :parent_id
+      t.integer :sort_order
 
       t.timestamps
     end
