@@ -15,6 +15,10 @@ AristoLms::Engine.routes.draw do
       collection do
         patch :sort
       end
+
+      collection do
+        patch :sort_children
+      end
     end
   end
 

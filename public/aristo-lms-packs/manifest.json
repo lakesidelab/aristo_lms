@@ -1,13 +1,13 @@
 {
-  "application.js": "/aristo-lms-packs/js/application-2d2a9d0cfbbe5f4276e0.js",
-  "application.js.map": "/aristo-lms-packs/js/application-2d2a9d0cfbbe5f4276e0.js.map",
+  "application.js": "/aristo-lms-packs/js/application-7786754bc4c62488a18c.js",
+  "application.js.map": "/aristo-lms-packs/js/application-7786754bc4c62488a18c.js.map",
   "entrypoints": {
     "application": {
       "js": [
-        "/aristo-lms-packs/js/application-2d2a9d0cfbbe5f4276e0.js"
+        "/aristo-lms-packs/js/application-7786754bc4c62488a18c.js"
       ],
       "js.map": [
-        "/aristo-lms-packs/js/application-2d2a9d0cfbbe5f4276e0.js.map"
+        "/aristo-lms-packs/js/application-7786754bc4c62488a18c.js.map"
       ]
     },
     "training": {

@@ -23,10 +23,6 @@
     <% end %>
   </div>
 
-
-
-
-
 </div>
 
 
@@ -42,8 +38,9 @@
   <%= @training.content %>
   <br/><br/>
 
-  <% @training.children.each do |node| %>
-
+  <div id="training-children" class="list-group" data-url="<%= sort_children_trainings_path %>">
+  <% @training.children.each do |node|%>
+  <div class="list-group-item" id="<%= dom_id(node) %>" >
   <div class="row">
     <div class="col-sm-6 col-md-6">
       <h4 class="training-title"><%= node.name %></h4>
@@ -53,15 +50,15 @@
       <%= link_to "Edit", edit_training_path(node), class: "btn btn-outline-primary" %> |
       <%= link_to 'Destroy', node, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto" %>
     </div>
-  </div
+  </div>
   <br/><br/>
-    <% if node.category == "content" %>
+    <% if node.category == "content" || node.category == "question" %>
 
-      <%= node.description %>
+      <h3><%= node.description %></h3>
 
       <br/><br/>
     <% elsif node.category == "module" || node.category == "switch" %>
-      <%= node.description %><br/><br/>
+      <p><%= node.description %></p><br/><br/>
       <% if node.category == "module" %>
         <%= link_to 'Create Content', new_training_path(parent_id: node, category: "content"), class: "btn btn-outline-primary" %> |
         <%= link_to 'Create Switch', new_training_path(parent_id: node, category: "switch"), class: "btn btn-outline-primary" %> |
@@ -72,7 +69,7 @@
       <div class="row">
         <% node.children.each do |child| %>
 
-        <div class="col-sm-3 col-md-3" id="<%= dom_id(child) %>">
+        <div class="col-sm-3 col-md-3">
           <div class="card h-100 border border-primary">
             <div class="card-body">
               <h5 class="card-title training-title"><%= child.name %></h5>
@@ -86,13 +83,13 @@
           </div>
         </div>
         <% end %>
-      </div>
       <br/><br/>
+    </div>
     <% end %>
-
+  </div>
 
   <% end %>
-
+</div>
 
 <% end %>
 
@@ -137,11 +134,15 @@
   <%= link_to 'Create Module', new_training_path(parent_id: @training, category: "module"), class: "btn btn-outline-primary" %> |
   <%= link_to 'Create Switch', new_training_path(parent_id: @training, category: "switch"), class: "btn btn-outline-primary" %> |
   <%= link_to 'Create Question', new_training_path(parent_id: @training, category: "question"), class: "btn btn-outline-primary" %>
-  <div class="module-list">
+  <br/><br/>
+
+    <%= @training.content %>
+    <br/><br/>
 
     <%# lists all first level modules %>
-    <% @modules.order(:position).each do |mod| %>
-
+    <div id="training-children" class="list-group" data-url="<%= sort_children_trainings_path %>">
+    <% @training.children.each do |mod| %>
+    <div class="list-group-item" id="<%= dom_id(mod) %>">
       <div class="row">
         <div class="col-sm-6 col-md-6">
           <h3 class="training-title"><%= mod.name %></h3>
@@ -187,6 +188,7 @@
         </div>
       <% end %>
       <br/><br/>
+    </div>
     <% end %>
   </div>
 <% end %>

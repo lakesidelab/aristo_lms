@@ -19,6 +19,12 @@ module AristoLms
       head :ok
     end
 
+    def sort_children
+      params[:training].each_with_index do |id, index|
+        Training.where(id: id).update_all(sort_order: index)
+      end
+    end
+
     # GET /trainings/1
     def show
       @current_user = current_user
