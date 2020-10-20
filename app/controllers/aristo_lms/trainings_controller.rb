@@ -4,7 +4,7 @@ module AristoLms
   class TrainingsController < ApplicationController
 
     before_action :set_training, only: [:show, :edit, :update, :destroy]
-    before_action :user_existing, only: [:new, :edit, :destroy]
+    before_action :user_existing
 
     # GET /trainings
     def index
