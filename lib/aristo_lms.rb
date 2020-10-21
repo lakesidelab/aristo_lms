@@ -5,6 +5,7 @@ require "jquery-rails"
 require "acts_as_list"
 require "jquery-ui-rails"
 require "turbolinks"
+require "bootstrap-sass"
 
 module AristoLms
 

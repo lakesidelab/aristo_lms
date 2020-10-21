@@ -2,12 +2,16 @@
 
 one:
   user_id: 1
-  session_id: 1
+  attempt_id: 1
   question_id: 1
+  multiple_answer_ids: ["2", "3"]
+  answer_id:
   answer_id: 1
 
 two:
   user_id: 1
-  session_id: 1
+  attempt_id: 1
   question_id: 1
+  multiple_answer_ids:
+  answer_id: 2
   answer_id: 1

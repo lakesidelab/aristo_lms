@@ -8,6 +8,7 @@ gemspec
 
 gem 'rdoc'
 
+gem 'bootstrap-sass'
 
 gem 'turbolinks', '~> 5'
 

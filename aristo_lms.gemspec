@@ -29,6 +29,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'turbolinks', '~> 5'
 
+  spec.add_dependency 'bootstrap-sass'
+
   spec.add_dependency 'closure_tree'
 
   spec.add_dependency "jquery-rails"

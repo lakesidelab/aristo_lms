@@ -6,7 +6,6 @@ one:
   current_node_id: MyString
   total_question: 1
   score: 1
-  status: 1
   result: 1
 
 two:
@@ -15,5 +14,4 @@ two:
   current_node_id: MyString
   total_question: 1
   score: 1
-  status: 1
   result: 1

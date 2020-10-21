@@ -105,7 +105,7 @@ module AristoLms
 
 
       def user_existing
-        if !is_aristo_admin
+        if !(is_aristo_admin)
           redirect_to subscriptions_path, alert: "You are not allowed to do that"
         end
       end

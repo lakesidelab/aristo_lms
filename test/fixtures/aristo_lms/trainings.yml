@@ -3,15 +3,18 @@
 one:
   name: MyString
   description: MyText
+  parent_id:
+  category: training
+  content:
+  position: 1
+  sort_order:
+  user_id: 1
 
 two:
-  name: MyString
-  description: MyText
-
-no_name:
-  name:
-  description: Something
-
-no_description:
-  name: something
-  description:
+  name: AnotherTraining
+  description: AChild
+  parent_id: one
+  category: content
+  position: 2
+  sort_order: 0
+  user_id: 1  
