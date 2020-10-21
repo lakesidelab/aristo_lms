@@ -2,7 +2,7 @@ one:
   email: test@mail.com
   password: password
 
-two:
+admin:
   email: admin@mail.com
   password: password
   id: 1

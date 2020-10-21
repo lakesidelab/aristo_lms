@@ -9,7 +9,7 @@
           <h3 class="card-title training-title"><%= training.name %></h3>
           <p class="card-text"><%= training.description %></p>
         </div>
-        <% if current_user.aristo_lms_subscriptions.exists?(training_id: training.id) %>
+        <% if @current_user.aristo_lms_subscriptions.exists?(training_id: training.id) %>
           <div class="card-body">
             <p class="card-text">Subscribed</p>
           </div>

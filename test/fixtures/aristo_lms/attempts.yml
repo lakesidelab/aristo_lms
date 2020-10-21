@@ -3,7 +3,7 @@
 one:
   user_id: 1
   subscription_id: 1
-  current_node_id: MyString
+  current_node_id: MySting
   total_question: 1
   score: 1
   result: 1

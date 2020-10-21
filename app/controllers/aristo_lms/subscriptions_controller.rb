@@ -91,6 +91,7 @@ module AristoLms
       @active_node_id  = params[:active_node_id]
       @immediate_parent_id = params[:immediate_parent_id]
 
+
       if params[:active_node_id].nil?
         @active_node = @subscription.training.children.first
         # @immediate_parent = @subscription.training.children.first

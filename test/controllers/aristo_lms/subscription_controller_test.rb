@@ -14,6 +14,13 @@ module AristoLms
       assert_response :success
     end
 
+    test "should get new with session" do
+      sign_in('test@mail.com', 'password')
+      get aristo_lms.new_subscription_url
+      assert_response :success
+    end
+
+
     private
     def sign_in(email, password)
       post login_url, params: { email: email, password: password }
