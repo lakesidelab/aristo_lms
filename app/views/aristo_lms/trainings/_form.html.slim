@@ -1,0 +1,28 @@
+= form_with(model: training, local: true) do |form|
+  - if training.errors.any?
+    #error_explanation
+      h2
+        = pluralize(training.errors.count, "error")
+        | prohibited this training from being saved:
+      ul
+        - training.errors.full_messages.each do |message|
+          li= message
+  .form-group
+    = form.label @label || :name
+    = form.text_field :name, class: "form-control", required: true
+  - if @parent
+    = form.hidden_field :parent_id, :value => @parent.id
+  - if @category != ""
+    = form.hidden_field :category, :value => @category
+  - if @category=="option"
+    .form-group
+      = form.label :correct
+      = form.select :correct, ['yes', 'no'], {}, class: 'form-control'
+  .form-group
+    = form.label @detail || :description
+    = form.text_area :description, class: "form-control"
+  .form-group
+    = form.label :content
+    = form.rich_text_area :content
+  .actions
+    = form.submit class: "btn btn-outline-primary"

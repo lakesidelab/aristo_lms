@@ -1,0 +1,174 @@
+p#notice= notice
+/! start of name and description
+.row
+  .col-sm-6.col-md-6
+    h1.training-title= @training.name
+  .col-sm-6.col-md-6
+    - if @is_arisro_admin
+      = link_to 'Edit', edit_training_path(@training), class: "btn btn-outline-primary"
+      | |
+    - if @training.parent && @training.ancestors.length == 2
+      = link_to 'Back', training_path(@training.ancestors.last), class: "btn btn-outline-primary"
+    - elsif @training.parent
+      = link_to 'Back', training_path(@training.parent), class: "btn btn-outline-primary"
+    - elsif @current_user && !@is_arisro_admin
+      = link_to 'Back', subscriptions_path, class: "btn btn-outline-primary"
+    - else
+      = link_to 'Back', trainings_path, class: "btn btn-outline-primary"
+- if @training.category == "training"
+  = link_to 'Create Content', new_training_path(parent_id: @training, category: "content"), class: "btn btn-outline-primary"
+  | |
+  = link_to 'Create Module', new_training_path(parent_id: @training, category: "module"), class: "btn btn-outline-primary"
+  | |
+  = link_to 'Create Switch', new_training_path(parent_id: @training, category: "switch"), class: "btn btn-outline-primary"
+  | |
+  = link_to 'Create Question', new_training_path(parent_id: @training, category: "question"), class: "btn btn-outline-primary"
+  br/
+  br/
+  == @training.content
+  br/
+  br/
+  #training-children.list-group data-url=sort_children_trainings_path
+    - @training.children.each do |node|
+      .list-group-item id="#{dom_id(node)}"
+        .row
+          .col-sm-6.col-md-6
+            h4.training-title= node.name
+          .col-sm-6.col-md-6
+            = link_to "Show", training_path(node), class: "btn btn-outline-primary"
+            | |
+            = link_to "Edit", edit_training_path(node), class: "btn btn-outline-primary"
+            | |
+            = link_to 'Destroy', node, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto"
+        br/
+        br/
+        - if node.category == "content" || node.category == "question"
+          h3= node.description
+          br/
+          br/
+        - elsif node.category == "module" || node.category == "switch"
+          p= node.description
+          br/
+          br/
+          - if node.category == "module"
+            = link_to 'Create Content', new_training_path(parent_id: node, category: "content"), class: "btn btn-outline-primary"
+            | |
+            = link_to 'Create Switch', new_training_path(parent_id: node, category: "switch"), class: "btn btn-outline-primary"
+            | |
+            = link_to 'Create Question', new_training_path(parent_id: node, category: "question"), class: "btn btn-outline-primary"
+          = link_to 'Create Module', new_training_path(parent_id: node, category: "module"), class: "btn btn-outline-primary"
+          br/
+          br/
+          .row
+            - node.children.each do |child|
+              .col-sm-3.col-md-3
+                .card.h-100.border.border-primary
+                  .card-body
+                    h5.card-title.training-title= child.name
+                    p.card-text= child.description
+                  .card-body.d-flex.flex-column
+                    = link_to 'Show ' + child.category, child, class: "btn btn-outline-primary mt-auto"
+                    = link_to 'Edit', edit_training_path(child), class: "btn btn-outline-primary mt-auto"
+                    = link_to 'Destroy', child, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto"
+            br/
+            br/
+br/
+- if @training.category == "content"
+  == @training.content
+- if @training.category == "switch"
+  == @training.content
+  br/
+  br/
+  #training-children.list-group data-url=sort_children_trainings_path
+    - @training.children.each do |switch_module|
+      .list-group-item id="#{dom_id(switch_module)}"
+        .row
+          .col-sm-6.col-md-6
+            h4.training-title= switch_module.name
+          .col-sm-6.col-md-6
+            = link_to "Show", training_path(switch_module), class: "btn btn-outline-primary"
+            | |
+            = link_to "Edit", edit_training_path(switch_module), class: "btn btn-outline-primary"
+            |\
+            =link_to 'Destroy', switch_module, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto"
+        - switch_module.children.each do |child|
+          .row
+            .col-sm-3.col-md-3
+              .card.h-100.border.border-primary
+                .card-body
+                  h5.card-title.training-title= child.name
+                  p.card-text= child.description
+                .card-body.d-flex.flex-column
+                  = link_to 'Show ' + child.category, child, class: "btn btn-outline-primary mt-auto"
+                  = link_to 'Edit', edit_training_path(child), class: "btn btn-outline-primary mt-auto"
+                  = link_to 'Destroy', child, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto"
+          br/
+          br/
+- if @training.category == "module"
+  = link_to 'Create Content', new_training_path(parent_id: @training, category: "content"), class: "btn btn-outline-primary"
+  | |
+  = link_to 'Create Module', new_training_path(parent_id: @training, category: "module"), class: "btn btn-outline-primary"
+  | |
+  = link_to 'Create Switch', new_training_path(parent_id: @training, category: "switch"), class: "btn btn-outline-primary"
+  | |
+  = link_to 'Create Question', new_training_path(parent_id: @training, category: "question"), class: "btn btn-outline-primary"
+  br/
+  br/
+  == @training.content
+  br/
+  br/
+  #training-children.list-group data-url=sort_children_trainings_path
+    - @training.children.each do |mod|
+      .list-group-item id="#{dom_id(mod)}"
+        .row
+          .col-sm-6.col-md-6
+            h3.training-title= mod.name
+          .col-sm-6.col-md-6
+            - if @is_arisro_admin
+              = link_to 'Edit', edit_training_path(mod), class: "btn btn-outline-primary"
+              | |
+              = link_to 'Destroy', mod, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto"
+        p= mod.description
+        - if mod.category == "" || mod.category == "submodule"
+          - if @is_arisro_admin
+            = link_to "Create new submodule", new_training_path(parent_id: mod, category: "submodule"), class: "btn btn-outline-primary"
+            | |
+            = link_to "Create Content", new_training_path(parent_id: mod, category: "content"), class: "btn btn-outline-primary"
+            | |
+            = link_to "Create Question", new_training_path(parent_id: mod, category: "question"), class: "btn btn-outline-primary"
+        - if mod.children != []
+          br/
+          br/
+          .row
+            - mod.children.order(:position).each do |children|
+              .col-sm-3.col-md-3 id="#{dom_id(children)}"
+                .card.h-100.border.border-primary
+                  .card-body
+                    h5.card-title.training-title= children.name
+                    p.card-text= children.description
+                  .card-body.d-flex.flex-column
+                    = link_to 'Show ' + children.category, children, class: "btn btn-outline-primary mt-auto"
+                    = link_to 'Edit', edit_training_path(children), class: "btn btn-outline-primary mt-auto"
+                    = link_to 'Destroy', children, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto"
+        br/
+        br/
+- if @training.category == "question"
+  = link_to "Add Option", new_training_path(parent_id: @training.id, category: "option"), class: "btn btn-outline-primary"
+  br/
+  br/
+  - @training.children.each do |option|
+    h3= option.name
+br/
+- if @training.category == "question_answer_session"
+  h3.training-title Listing Questions
+  br/
+  - @training.children.each do |mod|
+    .row
+      .col-md-6
+        h3= mod.name
+      .col-md-6
+        = link_to "Add Option", new_training_path(parent_id: mod.id, category: "option"), class: "btn btn-outline-primary"
+        = link_to 'Destroy', mod, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto"
+    p= mod.description
+    - mod.children.order(:position).each do |option|
+      h5= option.name

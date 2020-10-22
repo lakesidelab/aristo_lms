@@ -1,0 +1,133 @@
+h1= @subscription.training.name
+br/
+br/
+- if @active_node.category == "module"
+  - if @finished
+    | You have completed module #{@active_node.name}
+    br/
+    = @active_node.parent.children.length
+    | In this module you learned about
+    br/
+    br/
+    ol
+      - @active_node.children.each do |child|
+        li
+          strong= child.name
+    - if @active_node.parent.category == "switch"
+      = link_to "Next", subscription_path(@subscription, active_node_id: @active_node.parent, finished_module_id: @active_node.id), class: "btn btn-outline-primary"
+    - else
+      - if @active_node.siblings_after.length != 0
+        = link_to "Next", subscription_path(@subscription, active_node_id: @active_node.siblings_after.first), class: "btn btn-outline-primary"
+      - elsif @active_node.siblings_after.length == 0 && @active_node.parent_id != @subscription.training.id
+        = link_to "Next", subscription_path(@subscription, active_node_id: @active_node.parent, finished_module: true), class: "btn btn-outline-primary"
+      - elsif @active_node.siblings_after.length == 0 && @active_node.parent_id == @subscription.training.id
+        = link_to "Finish", finish_track_path(subscription_id: @subscription), class: "btn btn-outline-primary"
+  - else
+    h3.training-title= @active_node.name
+    == @active_node.content
+    | In this module you will learn
+    br/
+    br/
+    ol
+      - @active_node.children.each do |child|
+        li
+          strong= child.name
+    br/
+    br/
+    .row
+      .col-sm-6.col-md-6
+        - if @active_node.siblings_before.length != 0
+          = link_to "Back", subscription_path(@subscription, active_node_id: @active_node.siblings_before.last), class: "btn btn-outline-primary"
+        - elsif @active_node.siblings_before.length == 0 && !(@active_node.parent_id.nil?) && @active_node.parent.id == @subscription.training.id
+          = link_to "Back", subscriptions_path, class: "btn btn-outline-primary"
+        - elsif @active_node.siblings_before.length == 0 && !(@active_node.parent_id.nil?)
+          = link_to "Back", subscription_path(@subscription, active_node_id: @active_node.parent), class: "btn btn-outline-primary"
+      .col-sm-6.col-md-6
+        = link_to "Start Module", subscription_path(@subscription, active_node_id: @active_node.children.first), class: "btn btn-outline-primary"
+- elsif @active_node.category == "switch"
+  == @active_node.content
+  br/
+  br/
+  .row
+    - @active_node.children.each do |child|
+      .col-sm-3.col-md-3
+        .card.h-100.border.border-primary
+          .card-body
+            h3.card-title.training-title= child.name
+            p.card-text= child.description
+          .card-body.d-flex.flex-column
+            - @object = @subscription.attempts.where(["subscription_id = ? and user_id = ?", "#{@subscription.id}", "#{current_user.id}"]).order(:created_at).last
+            - if @object.switches.find_by(training_id: child.id).nil?
+              = link_to "Start", subscription_path(@subscription, active_node_id: child.id), class: "btn btn-outline-primary"
+            - else
+              h6 Completed
+  br/
+  br/
+  .row
+    .col-sm-6.col-md-6
+      - if @active_node.siblings_before.length != 0
+        = link_to "Back", subscription_path(@subscription, active_node_id: @active_node.siblings_before.last), class: "btn btn-outline-primary"
+      - elsif @active_node.siblings_before.length == 0 && !(@active_node.parent_id.nil?) && @active_node.parent.id == @subscription.training.id
+        = link_to "Back", subscriptions_path, class: "btn btn-outline-primary"
+      - elsif @active_node.siblings_before.length == 0 && !(@active_node.parent_id.nil?)
+        = link_to "Back", subscription_path(@subscription, active_node_id: @active_node.parent), class: "btn btn-outline-primary"
+    - if @subscription.attempts.order(:created_at).last.switches.length == @active_node.children.length
+      .col-sm-6.col-md-6
+        - if @active_node.siblings_after.length != 0
+          = link_to "Next", subscription_path(@subscription, active_node_id: @active_node.siblings_after.first), class: "btn btn-outline-primary"
+        - elsif @active_node.siblings_after.length == 0 && @active_node.parent_id != @subscription.training.id
+          = link_to "Next", subscription_path(@subscription, active_node_id: @active_node.parent, finished_module: true), class: "btn btn-outline-primary"
+        - elsif @active_node.siblings_after.length == 0 && @active_node.parent_id == @subscription.training.id
+          = link_to "Finish", finish_track_path(subscription_id: @subscription), class: "btn btn-outline-primary"
+- elsif @active_node.category == "content"
+  h3= @active_node.name
+  br/
+  == @active_node.content
+  br/
+  br/
+  .row
+    .col-sm-6.col-md-6
+      - if @active_node.siblings_before.length != 0
+        = link_to "Back", subscription_path(@subscription, active_node_id: @active_node.siblings_before.last), class: "btn btn-outline-primary"
+      - elsif @active_node.siblings_before.length == 0 && !(@active_node.parent_id.nil?) && @active_node.parent.id == @subscription.training.id
+        = link_to "Back", subscriptions_path, class: "btn btn-outline-primary"
+      - elsif @active_node.siblings_before.length == 0 && !(@active_node.parent_id.nil?)
+        = link_to "Back", subscription_path(@subscription, active_node_id: @active_node.parent), class: "btn btn-outline-primary"
+    .col-sm-6.col-md-6
+      - if @active_node.siblings_after.length != 0
+        = link_to "Next", subscription_path(@subscription, active_node_id: @active_node.siblings_after.first), class: "btn btn-outline-primary"
+      - elsif @active_node.siblings_after.length == 0 && @active_node.parent_id != @subscription.training.id
+        = link_to "Next", subscription_path(@subscription, active_node_id: @active_node.parent, finished_module: true), class: "btn btn-outline-primary"
+      - elsif @active_node.siblings_after.length == 0 && @active_node.parent_id == @subscription.training.id
+        = link_to "Finish", finish_track_path(subscription_id: @subscription), class: "btn btn-outline-primary"
+- elsif @active_node.category == "question"
+  h3= @active_node.name
+  == @active_node.content
+  - if @mcq
+    = @active_node.children.where(correct: "yes").map{|object| object.id.to_s }
+    = form_for @answer, :url => url_for(:controller => 'subscriptions', :action => 'quiz') do |form|
+      - @active_node.children.each do |option|
+        = form.check_box(:multiple_answer_ids, { :multiple => true }, option.id, nil)
+        = form.label :answer_id, option.name
+        br/
+      = form.hidden_field :question_id, :value => @active_node.id
+      = form.hidden_field :subscription_id, :value => @subscription.id
+      = form.hidden_field :module_id, :value => @active_module.id
+      = form.hidden_field :attempt_id, :value => @subscription.attempts.where(user_id: current_user.id).last.id
+      .actions
+        = form.submit class: "btn btn-outline-primary"
+  - else
+    br/
+    br/
+    = form_for @answer, url: submit_answer_path, method: :post do |form|
+      - @active_node.children.each do |option|
+        = form.radio_button :answer_id, option.id
+        = form.label :answer_id, option.name
+        br/
+      = form.hidden_field :question_id, :value => @active_node.id
+      = form.hidden_field :subscription_id, :value => @subscription.id
+      = form.hidden_field :module_id, :value => @active_module.id
+      = form.hidden_field :attempt_id, :value => @subscription.attempts.where(user_id: current_user.id).last.id
+      .actions
+        = form.submit class: "btn btn-outline-primary"
+      br/
