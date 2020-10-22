@@ -1,0 +1,22 @@
+p#notice= notice
+h1 Trainings
+/! listing tracks
+#tracks.row data-url=sort_trainings_path
+  - @trainings.each do |training|
+    .col-sm-4.col-md-4 id="#{dom_id(training)}"
+      .card.h-100.border.border-primary
+        .card-body
+          h3.card-title.training-title= training.name
+          p.card-text= training.description
+        .card-body.d-flex.flex-column
+          = link_to 'Show', training, class: "btn btn-outline-primary mt-auto"
+          = link_to 'Edit', edit_training_path(training), class: "btn btn-outline-primary mt-auto"
+          = link_to 'Destroy', training, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto"
+  /! link for new training
+  .col-sm-4.col-md-4
+    = link_to new_training_path(category: "training"), class: "hover-link" do
+      .card.h-100.border.border-primary.new-content-add-card
+        .card-body
+          center
+            = image_tag("aristo_lms/plus.png", style: "width:100%")
+            h3 Add new track

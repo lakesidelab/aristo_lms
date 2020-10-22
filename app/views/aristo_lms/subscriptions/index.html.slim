@@ -1,0 +1,24 @@
+h1.training-title Your Subscriptions
+br/
+- if @subscriptions.length == 0
+  center
+    h1 You have made no subscriptions
+    h5
+      = link_to "Click here", new_subscription_path
+      | , to explore tracks
+- else
+  .row
+    - @subscriptions.each do |subscription|
+      .col-sm-3.col-md-3 id="#{dom_id(subscription)}"
+        .card.h-100.border.border-primary
+          .card-body
+            h3.card-title.training-title= subscription.training.name
+            p.card-text= subscription.training.description
+          .card-body.d-flex.flex-column
+            - if subscription.attempts.where(user_id: current_user.id, subscription_id: subscription.id).length != 0
+              - if subscription.attempts.where(user_id: current_user.id, subscription_id: subscription.id).order(:id).last.completed
+                = link_to 'Retake', subscription_path(subscription), class: "btn btn-outline-primary mt-auto"
+              - else
+                = link_to 'Resume', subscription_path(subscription, active_node_id: subscription.attempts.last.current_node_id), class: "btn btn-outline-primary mt-auto"
+            - else
+              = link_to 'Start', subscription_path(subscription), class: "btn btn-outline-primary mt-auto"

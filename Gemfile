@@ -8,6 +8,8 @@ gemspec
 
 gem 'rdoc'
 
+gem 'slim-rails'
+
 gem 'bootstrap-sass'
 
 gem 'turbolinks', '~> 5'
