@@ -1,4 +1,4 @@
-equire 'rails/generators/base'
+require 'rails/generators/base'
 
 module AristoLms
   module Generators

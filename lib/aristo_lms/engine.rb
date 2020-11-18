@@ -1,9 +1,8 @@
 module AristoLms
-  class Engine < ::Rails::Engine
-    require 'jquery-ui-rails'
-    
+  class Engine < ::Rails::Engine    
     isolate_namespace AristoLms
 
+    # require 'jquery-ui-rails'
 
     initializer "aristo_lms.assets.precompile" do |app|
       app.config.assets.precompile += %w( aristo_lms/application.css aristo_lms/plus.png )
