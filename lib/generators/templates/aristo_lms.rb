@@ -2,3 +2,4 @@
 #give in your primary user model class name
 
 AristoLms.user_class = "User"
+AristoLms.layout = "application"

@@ -11,6 +11,7 @@ require "slim-rails"
 module AristoLms
 
   mattr_accessor :user_class
+  mattr_accessor :layout
 
   ROOT_PATH = Pathname.new(File.join(__dir__, ".."))
 
