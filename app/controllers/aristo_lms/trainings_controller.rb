@@ -60,6 +60,7 @@ module AristoLms
         @parent = Training.find(@parent_id)
       end
       @training = Training.new
+      @training.category = @category
     end
 
     # GET /trainings/1/edit

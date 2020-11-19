@@ -1,0 +1,28 @@
+== @training.content
+br/
+br/
+#training-children.list-group data-url=sort_children_trainings_path
+  - @training.children.each do |switch_module|
+    .list-group-item id="#{dom_id(switch_module)}"
+      .row
+        .col-sm-6.col-md-6
+          h4.training-title= switch_module.name
+        .col-sm-6.col-md-6
+          = link_to "Show", training_path(switch_module), class: "btn btn-outline-primary"
+          | |
+          = link_to "Edit", edit_training_path(switch_module), class: "btn btn-outline-primary"
+          |\
+          =link_to 'Destroy', switch_module, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto"
+      - switch_module.children.each do |child|
+        .row
+          .col-sm-3.col-md-3
+            .card.h-100.border.border-primary
+              .card-body
+                h5.card-title.training-title= child.name
+                p.card-text= child.description
+              .card-body.d-flex.flex-column
+                = link_to 'Show ' + child.category, child, class: "btn btn-outline-primary mt-auto"
+                = link_to 'Edit', edit_training_path(child), class: "btn btn-outline-primary mt-auto"
+                = link_to 'Destroy', child, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto"
+        br/
+        br/

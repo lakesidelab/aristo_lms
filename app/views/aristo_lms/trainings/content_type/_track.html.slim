@@ -1,0 +1,18 @@
+= link_to 'Create Training', new_training_path(parent_id: @training, category: "content"), class: "btn btn-outline-primary"
+br/
+br/
+== @training.content
+br/
+br/
+#training-children.list-group data-url=sort_children_trainings_path
+  - @training.children.each do |node|
+    .list-group-item id="#{dom_id(node)}"
+      .row
+        .col-sm-6.col-md-6
+          h4.training-title= node.name
+        .col-sm-6.col-md-6
+          = link_to "Show", training_path(node), class: "btn btn-outline-primary"
+          | |
+          = link_to "Edit", edit_training_path(node), class: "btn btn-outline-primary"
+          | |
+          = link_to 'Destroy', node, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto"

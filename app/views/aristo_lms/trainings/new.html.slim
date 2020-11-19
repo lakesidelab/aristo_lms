@@ -1,5 +1,5 @@
 - if @parent.nil?
-  h1 New Training
+  h1 New #{@training.category.titleize}
 - else
   h1
     | New Module under #{@parent.name}

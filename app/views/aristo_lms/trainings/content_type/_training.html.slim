@@ -1,0 +1,57 @@
+= link_to 'Create Content', new_training_path(parent_id: @training, category: "content"), class: "btn btn-outline-primary"
+| |
+= link_to 'Create Module', new_training_path(parent_id: @training, category: "module"), class: "btn btn-outline-primary"
+| |
+= link_to 'Create Switch', new_training_path(parent_id: @training, category: "switch"), class: "btn btn-outline-primary"
+| |
+= link_to 'Create Question', new_training_path(parent_id: @training, category: "question"), class: "btn btn-outline-primary"
+br/
+br/
+== @training.content
+br/
+br/
+#training-children.list-group data-url=sort_children_trainings_path
+  - @training.children.each do |node|
+    .list-group-item id="#{dom_id(node)}"
+      .row
+        .col-sm-6.col-md-6
+          h4.training-title= node.name
+        .col-sm-6.col-md-6
+          = link_to "Show", training_path(node), class: "btn btn-outline-primary"
+          | |
+          = link_to "Edit", edit_training_path(node), class: "btn btn-outline-primary"
+          | |
+          = link_to 'Destroy', node, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto"
+      br/
+      br/
+      - if node.category == "content" || node.category == "question"
+        h3= node.description
+        br/
+        br/
+      - elsif node.category == "module" || node.category == "switch"
+        p= node.description
+        br/
+        br/
+        - if node.category == "module"
+          = link_to 'Create Content', new_training_path(parent_id: node, category: "content"), class: "btn btn-outline-primary"
+          | |
+          = link_to 'Create Switch', new_training_path(parent_id: node, category: "switch"), class: "btn btn-outline-primary"
+          | |
+          = link_to 'Create Question', new_training_path(parent_id: node, category: "question"), class: "btn btn-outline-primary"
+        = link_to 'Create Module', new_training_path(parent_id: node, category: "module"), class: "btn btn-outline-primary"
+        br/
+        br/
+        .row
+          - node.children.each do |child|
+            .col-sm-3.col-md-3
+              .card.h-100.border.border-primary
+                .card-body
+                  h5.card-title.training-title= child.name
+                  p.card-text= child.description
+                .card-body.d-flex.flex-column
+                  = link_to 'Show ' + child.category, child, class: "btn btn-outline-primary mt-auto"
+                  = link_to 'Edit', edit_training_path(child), class: "btn btn-outline-primary mt-auto"
+                  = link_to 'Destroy', child, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto"
+          br/
+          br/
+br/

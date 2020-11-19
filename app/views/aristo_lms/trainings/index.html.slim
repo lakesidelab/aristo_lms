@@ -1,7 +1,23 @@
 p#notice= notice
-h1 Trainings
+h1 Tracks
 /! listing tracks
-#tracks.row data-url=sort_trainings_path
+  /! link for new training
+/ .row
+  .col-sm-4.col-md-4
+    = link_to new_training_path(category: "track"), class: "hover-link" do
+      .card.h-100.border.border-primary.new-content-add-card
+        .card-body
+          center
+            = image_tag("aristo_lms/plus.png", style: "width:100%")
+            h3 Add new track
+  / .col-sm-4.col-md-4
+    = link_to new_training_path(category: "training"), class: "hover-link" do
+      .card.h-100.border.border-primary.new-content-add-card
+        .card-body
+          center
+            = image_tag("aristo_lms/plus.png", style: "width:100%")
+            h3 Add new track
+/ #tracks.row data-url=sort_trainings_path
   - @trainings.each do |training|
     .col-sm-4.col-md-4 id="#{dom_id(training)}"
       .card.h-100.border.border-primary
@@ -12,11 +28,19 @@ h1 Trainings
           = link_to 'Show', training, class: "btn btn-outline-primary mt-auto"
           = link_to 'Edit', edit_training_path(training), class: "btn btn-outline-primary mt-auto"
           = link_to 'Destroy', training, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto"
-  /! link for new training
-  .col-sm-4.col-md-4
-    = link_to new_training_path(category: "training"), class: "hover-link" do
-      .card.h-100.border.border-primary.new-content-add-card
-        .card-body
-          center
-            = image_tag("aristo_lms/plus.png", style: "width:100%")
-            h3 Add new track
+
+
+= link_to 'Create Track', new_training_path(category: "track"), class: "btn btn-outline-primary"
+br/
+#training-children.list-group data-url=sort_trainings_path
+  - @trainings.each do |node|
+    .list-group-item id="#{dom_id(node)}"
+      .row
+        .col-sm-6.col-md-6
+          h4.training-title= node.name
+        .col-sm-6.col-md-6
+          = link_to "Show", training_path(node), class: "btn btn-outline-primary"
+          | |
+          = link_to "Edit", edit_training_path(node), class: "btn btn-outline-primary"
+          | |
+          = link_to 'Destroy', node, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto"
