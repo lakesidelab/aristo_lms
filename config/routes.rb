@@ -22,7 +22,7 @@ AristoLms::Engine.routes.draw do
     end
   end
 
-root 'subscriptions#index' 
+# root 'subscriptions#index' 
 
 
 end
