@@ -1,10 +1,10 @@
-= link_to 'Create Training', new_training_path(parent_id: @training, category: "content"), class: "btn btn-outline-primary"
+= link_to 'Create Training', new_training_path(parent_id: @training, category: "training"), class: "btn btn-outline-primary"
 br/
 br/
 == @training.content
 br/
 br/
-#training-children.list-group data-url=sort_children_trainings_path
+#training-children.list-group data-url=sort_trainings_path
   - @training.children.each do |node|
     .list-group-item id="#{dom_id(node)}"
       .row

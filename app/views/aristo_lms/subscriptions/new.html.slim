@@ -1,14 +1,18 @@
 h1 List of available tracks
-.row
-  - @trainings.each do |training|
-    .col-sm-3.col-md-3
-      .card.h-100.border.border-primary
-        .card-body
-          h3.card-title.training-title= training.name
-          p.card-text= training.description
-        - if @current_user.aristo_lms_subscriptions.exists?(training_id: training.id)
+- @trainings.each do |track|
+  .row
+    .col-12
+      = track.name
+  .row
+    - track.children.each do |training|
+      .col-sm-3.col-md-3
+        .card.h-100.border.border-primary
           .card-body
-            p.card-text Subscribed
-        - else
-          .card-body.d-flex.flex-column
-            = link_to 'Subscribe', subscriptions_path(training_id: training.id), method: :post, class: "btn btn-outline-primary mt-auto"
+            h3.card-title.training-title= training.name
+            p.card-text= training.description
+          - if @current_user.aristo_lms_subscriptions.exists?(training_id: training.id)
+            .card-body
+              p.card-text Subscribed
+          - else
+            .card-body.d-flex.flex-column
+              = link_to 'Subscribe', subscriptions_path(training_id: training.id), method: :post, class: "btn btn-outline-primary mt-auto"

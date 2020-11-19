@@ -8,14 +8,13 @@ module AristoLms
 
     # GET /trainings
     def index
-      @trainings = Training.where(parent_id: nil).order(position: :asc)
+      @trainings = Training.where(parent_id: nil).order(sort_order: :asc)
     end
 
     def sort
       params[:training].each_with_index do |id, index|
-        Training.where(id: id).update_all(position: index + 1)
+        Training.where(id: id).update_all(sort_order: index)
       end
-
       head :ok
     end
 
@@ -47,6 +46,7 @@ module AristoLms
     def new
       @parent_id = params[:parent_id]
       @category = params[:category]
+
       if @category == "question"
         @label = "question"
         @detail = "More details if any"
@@ -56,11 +56,10 @@ module AristoLms
         @label = "option"
         @detail = "More information on why it is wright or wrong"
       end
-      if !(@parent_id.nil?)
-        @parent = Training.find(@parent_id)
-      end
+
       @training = Training.new
-      @training.category = @category
+      @training.parent_id = params[:parent_id]
+      @training.category = params[:category]
     end
 
     # GET /trainings/1/edit

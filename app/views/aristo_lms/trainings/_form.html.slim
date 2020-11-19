@@ -10,11 +10,9 @@
   .form-group
     = form.label @label || :name
     = form.text_field :name, class: "form-control", required: true
-  - if @parent
-    = form.hidden_field :parent_id, :value => @parent.id
-  - if @category != ""
-    = form.hidden_field :category, :value => @category
-  - if @category=="option"
+    = form.hidden_field :parent_id
+    = form.hidden_field :category
+  - if form.object.category=="option"
     .form-group
       = form.label :correct
       = form.select :correct, ['yes', 'no'], {}, class: 'form-control'

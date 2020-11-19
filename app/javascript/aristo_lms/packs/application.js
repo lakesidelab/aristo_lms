@@ -21,10 +21,10 @@ document.addEventListener('turbolinks:load', function(){
       Rails.ajax({
         url: $(this).data("url"),
         type: "PATCH",
-        data: $(this).sortable('serialize'),
+        data: $(this).sortable('serialize', {expression:(/(.+)[_](.+)/)}),
       })
     }
-  })
+  });
 });
 
 document.addEventListener('turbolinks:load', function(){
@@ -33,7 +33,7 @@ document.addEventListener('turbolinks:load', function(){
       Rails.ajax({
         url: $(this).data("url"),
         type: "PATCH",
-        data: $(this).sortable('serialize'),
+        data: $(this).sortable('serialize', {expression:(/(.+)[_](.+)/)}),
       })
     }
   })

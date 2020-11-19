@@ -1,0 +1,12 @@
+h3.training-title Listing Questions
+br/
+- @training.children.each do |mod|
+  .row
+    .col-md-6
+      h3= mod.name
+    .col-md-6
+      = link_to "Add Option", new_training_path(parent_id: mod.id, category: "option"), class: "btn btn-outline-primary"
+      = link_to 'Destroy', mod, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto"
+  p= mod.description
+  - mod.children.order(:position).each do |option|
+    h5= option.name
