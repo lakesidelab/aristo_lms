@@ -7,12 +7,17 @@ p#notice= notice
     - if @is_arisro_admin
       = link_to 'Edit', edit_training_path(@training), class: "btn btn-outline-primary"
       | |
-    - if @training.parent && @training.ancestors.length == 2
-      = link_to 'Back', training_path(@training.ancestors.last), class: "btn btn-outline-primary"
-    - elsif @training.parent
+    - if @training.parent
       = link_to 'Back', training_path(@training.parent), class: "btn btn-outline-primary"
     - elsif @current_user && !@is_arisro_admin
       = link_to 'Back', subscriptions_path, class: "btn btn-outline-primary"
+
+    / - if @training.parent && @training.ancestors.length == 2
+    /   = link_to 'Back', training_path(@training.ancestors.last), class: "btn btn-outline-primary"
+    / - elsif @training.parent
+    /   = link_to 'Back', training_path(@training.parent), class: "btn btn-outline-primary"
+    / - elsif @current_user && !@is_arisro_admin
+    /   = link_to 'Back', subscriptions_path, class: "btn btn-outline-primary"
     - else
       = link_to 'Back', trainings_path, class: "btn btn-outline-primary"
 == render "aristo_lms/trainings/content_type/#{@training.category}"

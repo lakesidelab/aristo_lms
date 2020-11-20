@@ -28,7 +28,7 @@ module AristoLms
       @attempt = Attempt.where(subscription_id: params[:subscription_id], user_id: current_user.id).last
       if @attempt.total_question == 0
         @attempt.result = "pass"
-      elsif @attemt.total_question !=0 && @attemt.score == 0
+      elsif @attempt.total_question !=0 && @attempt.score == 0
         @attempt.result = "fail"
       elsif @attempt.score != 0 && @attempt.score / @attempt.total_question * 100 >= 50
         @attempt.result = "pass"
@@ -94,6 +94,7 @@ module AristoLms
 
       if params[:active_node_id].nil?
         @active_node = @subscription.training.children.first
+        # @active_node = @subscription.training if @active_node.nil?
         # @immediate_parent = @subscription.training.children.first
         # @active_node  = @active_module.children.first
         @attempt = Attempt.new(user_id: current_user.id, subscription_id: @subscription.id, current_node_id: @active_node.id,
