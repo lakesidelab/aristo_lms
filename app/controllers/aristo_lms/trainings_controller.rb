@@ -100,7 +100,7 @@ module AristoLms
 
       # Only allow a trusted parameter "white list" through.
       def training_params
-        params.require(:training).permit(:name, :description, :parent_id, :category, :content, :correct)
+        params.require(:training).permit(:name, :description, :parent_id, :category, :content, :correct, :cover_image)
       end
 
 

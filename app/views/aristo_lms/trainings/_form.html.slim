@@ -16,11 +16,16 @@
     .form-group
       = form.label :correct
       = form.select :correct, ['yes', 'no'], {}, class: 'form-control'
-  .form-group
-    = form.label @detail || :description
-    = form.text_area :description, class: "form-control"
-  .form-group
-    = form.label :content
-    = form.rich_text_area :content
+  - if form.object.category == "training" or form.object.category == "module"  or form.object.category == "track" 
+    .form-group
+      = form.label @detail || :description
+      = form.text_area :description, class: "form-control"
+    .form-group
+      = form.label :cover_image
+      = form.file_field :cover_image
+  - else
+    .form-group
+      = form.label :content
+      = form.rich_text_area :content
   .actions
     = form.submit "Save", class: "btn btn-outline-primary"
