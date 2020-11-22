@@ -6,8 +6,8 @@
 = render 'form', training: @training
 br/
 - if @parent && (@parent.ancestors != [] || @parent.parent)
-  = link_to 'Back', training_path(@parent.ancestors.last || @parent.parent)
+  = link_to 'Back', training_path(@parent.ancestors.last || @parent.parent, root_node: params[:root_node])
 - elsif @parent
-  = link_to 'Back', training_path(@parent)
+  = link_to 'Back', training_path(@parent, root_node: params[:root_node])
 - else
-  = link_to 'Back', trainings_path
+  = link_to 'Back', trainings_path(root_node: params[:root_node])

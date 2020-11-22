@@ -8,11 +8,11 @@ br/
         .col-sm-6.col-md-6
           h4.training-title= switch_module.name
         .col-sm-6.col-md-6
-          = link_to "Show", training_path(switch_module), class: "btn btn-outline-primary"
+          = link_to "Show", training_path(switch_module, root_node: params[:root_node]), class: "btn btn-outline-primary"
           | |
-          = link_to "Edit", edit_training_path(switch_module), class: "btn btn-outline-primary"
+          = link_to "Edit", edit_training_path(switch_module, root_node: params[:root_node]), class: "btn btn-outline-primary"
           |\
-          =link_to 'Destroy', switch_module, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto"
+          =link_to 'Destroy', training_path(switch_module, root_node: params[:root_node]), method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto"
       - switch_module.children.each do |child|
         .row
           .col-sm-3.col-md-3
@@ -21,8 +21,8 @@ br/
                 h5.card-title.training-title= child.name
                 p.card-text= child.description
               .card-body.d-flex.flex-column
-                = link_to 'Show ' + child.category, child, class: "btn btn-outline-primary mt-auto"
+                = link_to 'Show ' + child.category, training_path(child, root_node: params[:root_node]), class: "btn btn-outline-primary mt-auto"
                 = link_to 'Edit', edit_training_path(child), class: "btn btn-outline-primary mt-auto"
-                = link_to 'Destroy', child, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto"
+                = link_to 'Destroy', training_path(child, root_node: params[:root_node]), method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-outline-danger mt-auto"
         br/
         br/

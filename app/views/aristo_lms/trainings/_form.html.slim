@@ -1,4 +1,4 @@
-= form_with(model: training, local: true) do |form|
+= form_with(model: training, url: training.new_record? ? trainings_path(root_node: params[:root_node]) : training_path(training, root_node: params[:root_node]), local: true) do |form|
   - if training.errors.any?
     #error_explanation
       h2

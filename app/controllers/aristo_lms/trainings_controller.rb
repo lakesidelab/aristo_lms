@@ -5,10 +5,12 @@ module AristoLms
 
     before_action :set_training, only: [:show, :edit, :update, :destroy]
     before_action :user_existing
+    before_action :set_root_node
+
 
     # GET /trainings
     def index
-      @trainings = Training.where(parent_id: nil).order(sort_order: :asc)
+      @trainings = @root_node.children #Training.where(parent_id: nil).order(sort_order: :asc)
     end
 
     def sort
@@ -36,7 +38,7 @@ module AristoLms
       @status = Status.new(user_id: current_user.id, training_id: @training.id, immediate_parent_id: @training.parent.id || @training.parent ,
         root_id: @training.ancestors.last.id || @training.ancestors.last )
       if @status.save
-        redirect_to training_path(@training)
+        redirect_to training_path(@training, root_node: params[:root_node])
       else
         redirect_to subscriptions_path
       end
@@ -71,7 +73,7 @@ module AristoLms
       @training = Training.new(training_params)
       @training.user_id = current_user.id
       if @training.save
-        redirect_to @training, notice: 'Training was successfully created.'
+        redirect_to training_path(@training, root_node: params[:root_node]), notice: 'Training was successfully created.'
       else
         render :new
       end
@@ -80,7 +82,7 @@ module AristoLms
     # PATCH/PUT /trainings/1
     def update
       if @training.update(training_params)
-        redirect_to @training, notice: 'Training was successfully updated.'
+        redirect_to training_path(@training, root_node: params[:root_node]), notice: 'Training was successfully updated.'
       else
         render :edit
       end
@@ -89,7 +91,7 @@ module AristoLms
     # DELETE /trainings/1
     def destroy
       @training.destroy
-      redirect_to trainings_url, notice: 'Training was successfully destroyed.'
+      redirect_to trainings_url(root_node: params[:root_node]), notice: 'Training was successfully destroyed.'
     end
 
     private
@@ -103,6 +105,11 @@ module AristoLms
         params.require(:training).permit(:name, :description, :parent_id, :category, :content, :correct, :cover_image)
       end
 
+      def set_root_node
+        # @root_node = Training.find_or_create_by_path([{name: params[:root_node], category: 'root'}])
+        @root_node = Training.roots.where(name: params[:root_node]).first_or_create(user: current_user, category: "root")
+        # @root_node.save
+      end
 
       def user_existing
         if !(is_aristo_admin)

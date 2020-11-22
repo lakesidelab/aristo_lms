@@ -10,6 +10,7 @@ module AristoLms
     has_many :users, class_name: AristoLms.user_class, through: :subscriptions
     has_rich_text :content
     has_one_attached :cover_image
+    
     validates_presence_of :name
 
     def set_user

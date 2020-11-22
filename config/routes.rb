@@ -10,7 +10,7 @@ AristoLms::Engine.routes.draw do
   resources :subscriptions
 
 
-  scope '/studio' do
+  scope ':root_node' do
     resources :trainings do
       collection do
         patch :sort

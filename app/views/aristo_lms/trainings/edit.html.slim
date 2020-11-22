@@ -1,6 +1,6 @@
 h1 Edit #{@training.category.titleize}
 = render 'form', training: @training
 br/
-= link_to 'Show', @training
+= link_to 'Show', training_path(@training, root_node: params[:root_node])
 | \
-= link_to 'Back', trainings_path
+= link_to 'Back', trainings_path(root_node: params[:root_node])

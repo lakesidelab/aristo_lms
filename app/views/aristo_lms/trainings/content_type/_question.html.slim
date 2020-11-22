@@ -1,4 +1,4 @@
-= link_to "Add Option", new_training_path(parent_id: @training.id, category: "option"), class: "btn btn-outline-primary"
+= link_to "Add Option", new_training_path(parent_id: @training.id, category: "option", root_node: params[:root_node]), class: "btn btn-outline-primary"
 br/
 br/
 - @training.children.each do |option|
