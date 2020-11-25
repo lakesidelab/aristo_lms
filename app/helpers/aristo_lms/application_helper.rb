@@ -20,5 +20,13 @@ module AristoLms
       end
     end
 
+    def switch_subscriptions
+      if AristoLms.redirect_to_root
+        main_app.root_path
+      else
+        subscriptions_path
+      end
+    end
+
   end
 end

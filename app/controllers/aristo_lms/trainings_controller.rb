@@ -40,7 +40,7 @@ module AristoLms
       if @status.save
         redirect_to training_path(@training, root_node: params[:root_node])
       else
-        redirect_to subscriptions_path
+        redirect_to switch_subscriptions
       end
     end
 
@@ -113,7 +113,7 @@ module AristoLms
 
       def user_existing
         if !(is_aristo_admin)
-          redirect_to subscriptions_path, alert: "You are not allowed to do that"
+          redirect_to switch_subscriptions, alert: "You are not allowed to do that"
         end
       end
 

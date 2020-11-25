@@ -7,7 +7,11 @@ AristoLms::Engine.routes.draw do
 
   get '/finish', to: 'subscriptions#finish', as: 'finish_track'
 
-  resources :subscriptions
+  resources :subscriptions do
+    member do
+      get :start
+    end
+  end
 
 
   scope ':root_node' do

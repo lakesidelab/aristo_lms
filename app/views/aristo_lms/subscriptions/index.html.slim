@@ -16,7 +16,7 @@ br/
             p.card-text= subscription.training.description
           .card-body.d-flex.flex-column
             - if subscription.attempts.where(user_id: current_user.id, subscription_id: subscription.id).length != 0
-              - if subscription.attempts.where(user_id: current_user.id, subscription_id: subscription.id).order(:id).last.completed
+              - if subscription.attempts.where(user_id: current_user.id, subscription_id: subscription.id).order(:created_at).last.completed
                 = link_to 'Retake', subscription_path(subscription), class: "btn btn-outline-primary mt-auto"
               - else
                 = link_to 'Resume', subscription_path(subscription, active_node_id: subscription.attempts.last.current_node_id), class: "btn btn-outline-primary mt-auto"

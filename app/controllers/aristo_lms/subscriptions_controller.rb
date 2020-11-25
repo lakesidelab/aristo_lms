@@ -1,9 +1,9 @@
-require_dependency "aristo_lms/application_controller"
+# require_dependency "aristo_lms/application_controller"
 
 module AristoLms
   class SubscriptionsController < ApplicationController
     before_action :set_current_user, only: [:index, :new]
-    before_action :set_subscription, only: [:show]
+    before_action :set_subscription, only: [:show, :start]
 
     def index
       @subscriptions = Subscription.where(user_id: current_user.id)
@@ -17,15 +17,15 @@ module AristoLms
     def create
       @subscription = Subscription.create(training_id: params[:training_id], user_id: current_user.id )
       if @subscription.save
-        redirect_to subscriptions_path
+        redirect_to helpers.switch_subscriptions
       else
-        redirect_to new_subscriptions_path, alert: "Not added"
+        redirect_to new_subscription_path, alert: "Not added"
       end
     end
 
 
     def finish
-      @attempt = Attempt.where(subscription_id: params[:subscription_id], user_id: current_user.id).last
+      @attempt = Attempt.where(subscription_id: params[:subscription_id], user_id: current_user.id).order(:created_at).last
       if @attempt.total_question == 0
         @attempt.result = "pass"
       elsif @attempt.total_question !=0 && @attempt.score == 0
@@ -36,7 +36,7 @@ module AristoLms
         @attempt.result = "fail"
       end
       @attempt.update(completed: true)
-      redirect_to subscriptions_path
+      redirect_to helpers.switch_subscriptions
     end
 
     def quiz
@@ -85,26 +85,34 @@ module AristoLms
       end
     end
 
+    def start
+      @active_node = @subscription.training.children.first
+      @attempt = Attempt.new(user_id: current_user.id, subscription_id: @subscription.id, current_node_id: @active_node.id,
+                              total_question: 0)
+      @attempt.save
+      redirect_to subscription_path(@subscription, active_node_id: @active_node.id)
+    end
 
     def show
       @active_module_id = params[:active_module_id]
       @active_node_id  = params[:active_node_id]
       @immediate_parent_id = params[:immediate_parent_id]
 
+      @attempt = Attempt.where(user_id: current_user.id, subscription_id: @subscription.id).order(:created_at).last
+
+      # @active_node = @subscription.training.children.first
+      # @attempt = Attempt.new(user_id: current_user.id, subscription_id: @subscription.id, current_node_id: @active_node.id,
+      #                         total_question: 0)
+      # @attempt.save
 
       if params[:active_node_id].nil?
-        @active_node = @subscription.training.children.first
-        # @active_node = @subscription.training if @active_node.nil?
-        # @immediate_parent = @subscription.training.children.first
-        # @active_node  = @active_module.children.first
-        @attempt = Attempt.new(user_id: current_user.id, subscription_id: @subscription.id, current_node_id: @active_node.id,
-                                total_question: 0)
-        @attempt.save
+        @active_node  = @subscription.training
+        @immediate_parent = @subscription.training
       else
         @active_node  = Training.find(params[:active_node_id])
         @active_module = @active_node.ancestors[@active_node.ancestors.length - 2]
         @immediate_parent = @active_node.parent
-        Attempt.where(["subscription_id = ? and user_id = ?", "#{@subscription.id}", "#{current_user.id}"]).order(:created_at).last.update(current_node_id: @active_node.id)
+        @attempt.update(current_node_id: @active_node.id)
       end
 
       if @active_node.category == "module"
@@ -112,15 +120,14 @@ module AristoLms
       end
 
       if @active_node.category == "switch" && !(params[:finished_module_id].nil?)
-        @attempt_id = Attempt.where(["subscription_id = ? and user_id = ?", "#{@subscription.id}", "#{current_user.id}"]).order(:created_at).last.id
         @training_id = Training.find(params[:finished_module_id]).id
-        @switch = Switch.new(attempt_id: @attempt_id, training_id: params[:finished_module_id], completed: true)
+        @switch = Switch.new(attempt_id: @@attempt.id, training_id: params[:finished_module_id], completed: true)
         @switch.save
       end
 
 
       if @active_node.category == "question"
-        Attempt.where(["subscription_id = ? and user_id = ?", "#{@subscription.id}", "#{current_user.id}"]).order(:created_at).last.increment!(:total_question)
+        @attempt.increment!(:total_question)
         @answer = Answer.new
         if @active_node.children.where(correct: "yes").length > 1
           @mcq = true

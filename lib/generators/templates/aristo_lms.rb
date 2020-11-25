@@ -3,3 +3,4 @@
 
 AristoLms.user_class = "User"
 AristoLms.layout = "application"
+AristoLms.redirect_to_root = false

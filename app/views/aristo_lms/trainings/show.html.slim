@@ -10,13 +10,13 @@ p#notice= notice
     - if @training.parent and @training.parent.category != "root" 
       = link_to 'Back', training_path(@training.parent, root_node: params[:root_node]), class: "btn btn-outline-primary"
     / - elsif @current_user && !@is_arisro_admin
-      = link_to 'Back', subscriptions_path, class: "btn btn-outline-primary"
+      = link_to 'Back', switch_subscriptions, class: "btn btn-outline-primary"
     / - if @training.parent && @training.ancestors.length == 2
     /   = link_to 'Back', training_path(@training.ancestors.last, root_node: params[:root_node]), class: "btn btn-outline-primary"
     / - elsif @training.parent
     /   = link_to 'Back', training_path(@training.parent, root_node: params[:root_node]), class: "btn btn-outline-primary"
     / - elsif @current_user && !@is_arisro_admin
-    /   = link_to 'Back', subscriptions_path, class: "btn btn-outline-primary"
+    /   = link_to 'Back', switch_subscriptions, class: "btn btn-outline-primary"
     - else
       = link_to 'Back', trainings_path(root_node: params[:root_node]), class: "btn btn-outline-primary"
 == render "aristo_lms/trainings/content_type/#{@training.category}"

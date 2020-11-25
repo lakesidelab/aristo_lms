@@ -1,7 +1,15 @@
 h1= @subscription.training.name
 br/
 br/
-- if @active_node.category == "module"
+- if @active_node.category == "training"
+    - if !@attempt.nil?
+      - if @attempt.completed
+        = link_to 'Retake', start_subscription_path(@subscription), class: "btn btn-outline-primary mt-auto"
+      - else
+        = link_to 'Resume', subscription_path(@subscription, active_node_id: @attempt.current_node_id), class: "btn btn-outline-primary mt-auto"
+    - else
+      = link_to 'Start', start_subscription_path(@subscription), class: "btn btn-outline-primary mt-auto"
+- elsif @active_node.category == "module"
   - if @finished
     | You have completed module #{@active_node.name}
     br/
@@ -39,7 +47,7 @@ br/
         - if @active_node.siblings_before.length != 0
           = link_to "Back", subscription_path(@subscription, active_node_id: @active_node.siblings_before.last), class: "btn btn-outline-primary"
         - elsif @active_node.siblings_before.length == 0 && !(@active_node.parent_id.nil?) && @active_node.parent.id == @subscription.training.id
-          = link_to "Back", subscriptions_path, class: "btn btn-outline-primary"
+          = link_to "Back", switch_subscriptions, class: "btn btn-outline-primary"
         - elsif @active_node.siblings_before.length == 0 && !(@active_node.parent_id.nil?)
           = link_to "Back", subscription_path(@subscription, active_node_id: @active_node.parent), class: "btn btn-outline-primary"
       .col-sm-6.col-md-6
@@ -68,7 +76,7 @@ br/
       - if @active_node.siblings_before.length != 0
         = link_to "Back", subscription_path(@subscription, active_node_id: @active_node.siblings_before.last), class: "btn btn-outline-primary"
       - elsif @active_node.siblings_before.length == 0 && !(@active_node.parent_id.nil?) && @active_node.parent.id == @subscription.training.id
-        = link_to "Back", subscriptions_path, class: "btn btn-outline-primary"
+        = link_to "Back", switch_subscriptions, class: "btn btn-outline-primary"
       - elsif @active_node.siblings_before.length == 0 && !(@active_node.parent_id.nil?)
         = link_to "Back", subscription_path(@subscription, active_node_id: @active_node.parent), class: "btn btn-outline-primary"
     - if @subscription.attempts.order(:created_at).last.switches.length == @active_node.children.length
@@ -90,7 +98,7 @@ br/
       - if @active_node.siblings_before.length != 0
         = link_to "Back", subscription_path(@subscription, active_node_id: @active_node.siblings_before.last), class: "btn btn-outline-primary"
       - elsif @active_node.siblings_before.length == 0 && !(@active_node.parent_id.nil?) && @active_node.parent.id == @subscription.training.id
-        = link_to "Back", subscriptions_path, class: "btn btn-outline-primary"
+        = link_to "Back", switch_subscriptions, class: "btn btn-outline-primary"
       - elsif @active_node.siblings_before.length == 0 && !(@active_node.parent_id.nil?)
         = link_to "Back", subscription_path(@subscription, active_node_id: @active_node.parent), class: "btn btn-outline-primary"
     .col-sm-6.col-md-6
